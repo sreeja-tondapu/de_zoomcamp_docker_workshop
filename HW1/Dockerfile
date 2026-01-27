@@ -1,7 +1,5 @@
 FROM python:3.13.11-slim
 
-
-
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/
 
 WORKDIR /code
@@ -12,16 +10,10 @@ COPY pyproject.toml  .python-version uv.lock ./
 RUN uv sync --locked
 
 
-COPY ingest_data.py .
+COPY ingestion_HW1.py ingest_zones.py ./
+COPY green_tripdata_2025-11.parquet taxi_zone_lookup.csv ./
 
-ENTRYPOINT ["python","ingest_data.py"]
+ENTRYPOINT ["uv", "run", "python"]
 
 
 
-docker run -it --rm \
-  -e POSTGRES_USER="root" \
-  -e POSTGRES_PASSWORD="root" \
-  -e POSTGRES_DB="ny_taxi_green_trips" \
-  -v ny_taxi_postgres_data:/var/lib/postgresql \
-  -p 5432:5432 \
-  postgres:18
